@@ -3,7 +3,7 @@
 [![Build Status](https://api.travis-ci.org/anaptfox/cacheman-file.png?branch=master)](https://travis-ci.org/anaptfox/cacheman-file)
 [![NPM version](https://badge.fury.io/js/cacheman-file.png)](http://badge.fury.io/js/cacheman-file)
 
-File caching library for Node.JS and also cache engine for [cacheman](https://github.com/cayasso/cacheman).
+File caching library for Node.JS and also cache engine for [cacheman](https://github.com/cayasso/cacheman). This fork of cacheman-file support multi-instance service.
 
 ## Instalation
 
