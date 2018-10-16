@@ -3,12 +3,13 @@ var Path = require('path');
 var Fs = require('fs-extra');
 var sanitize = require('sanitize-filename');
 var Cache = require('../');
-var cache;
+var cache, cache1;
 
 describe('cacheman-file', function() {
 
   before(function(done) {
     cache = new Cache({tmpDir: Path.join(process.cwd(), 'temp')}, {});
+    cache1 = new Cache({tmpDir: Path.join(process.cwd(), 'temp')}, {});
     done();
   });
 
@@ -23,6 +24,19 @@ describe('cacheman-file', function() {
     assert.ok(cache.del);
     assert.ok(cache.clear);
     assert.ok(cache.getAll);
+  });
+
+  it('should multi instance set / get', function(done) {
+    cache.set('test1', {
+      a: 2
+    }, function(err) {
+      if (err) return done(err);
+      cache1.get('test1', function(err, data) {
+        if (err) return done(err);
+        assert.equal(data.a, 2);
+        done();
+      });
+    });
   });
 
   it('should set temp directory from options', function (done) {
@@ -85,10 +99,11 @@ describe('cacheman-file', function() {
     }, function(err) {
       if (err) return done(err);
 
+      // no need
       // compare cached key against sanitized key
-      var lastKey = Object.keys(cache.cache).pop();
-      var sanitizedKey = sanitize(key);
-      assert.equal(sanitizedKey, lastKey);
+      // var lastKey = Object.keys(cache.cache).pop();
+      // var sanitizedKey = sanitize(key);
+      // assert.equal(sanitizedKey, lastKey);
 
       // check functionality, along the way
       cache.get(key, function(err, data) {

@@ -14,13 +14,6 @@ function FileStore(options) {
   self.tmpDir = options.tmpDir || Path.join(process.cwd(), 'tmp');
 
   if (!Fs.existsSync(self.tmpDir)) Fs.mkdirSync(self.tmpDir);
-
-  var cacheFiles = Fs.readdirSync(self.tmpDir);
-  self.cache = {};
-  cacheFiles.forEach(function(file) {
-    file = file.replace('.json', '');
-    self.cache[file] = true;
-  });
 }
 
 /**
@@ -42,10 +35,6 @@ FileStore.prototype.get = function get(key, fn) {
     data = Fs.readFileSync(cacheFile);
     data = JSON.parse(data);
   } else {
-    return fn(null, null);
-  }
-
-  if (!this.cache[key]) {
     return fn(null, null);
   }
 
@@ -97,7 +86,6 @@ FileStore.prototype.set = function set(key, val, ttl, fn) {
   Fs.writeFileSync(cacheFile, JSON.stringify(data, null, 4));
 
   process.nextTick(function tick() {
-    self.cache[key] = data.expire;
     fn(null, val);
   });
 };
@@ -116,7 +104,6 @@ FileStore.prototype.del = function del(key, fn) {
   fn = fn || Noop;
 
   if (!Fs.existsSync(cacheFile)) {
-    self.cache[key] = null;
     return fn();
   }
 
@@ -127,7 +114,6 @@ FileStore.prototype.del = function del(key, fn) {
   }
 
   process.nextTick(function tick() {
-    self.cache[key] = null;
     fn(null);
   });
 };
@@ -156,7 +142,6 @@ FileStore.prototype.clear = function clear(key, fn) {
   }
 
   process.nextTick(function tick() {
-    self.cache = {};
     fn(null);
   });
 };
@@ -167,7 +152,14 @@ FileStore.prototype.clear = function clear(key, fn) {
  */
 FileStore.prototype.getAll = function (fn) {
   var self = this;
-  var entries = [], cache = self.cache;
+  var entries = [];
+
+  var cacheFiles = Fs.readdirSync(self.tmpDir);
+  var cache = {};
+  cacheFiles.forEach(function(file) {
+    file = file.replace('.json', '');
+    cache[file] = true;
+  });
 
   Object.keys(cache).forEach(function (entry) {
     self.get(entry, function (err, result) {
