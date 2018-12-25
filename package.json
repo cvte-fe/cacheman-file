@@ -1,10 +1,9 @@
 {
   "name": "@cvte/cacheman-file-multi-instance",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "File caching library for Node.JS and also cache engine for cacheman",
   "author": "Taron Foxworth <taronfoxworth@gmail.com>",
-  "contributors": [
-    {
+  "contributors": [{
       "name": "Jeremiah Harlan",
       "email": "jeremiah.harlan@gmail.com"
     },
